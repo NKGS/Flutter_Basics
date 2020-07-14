@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1083438144676",
+    "firebase_url": "https://flutter-basics-feeb9.firebaseio.com",
+    "project_id": "flutter-basics-feeb9",
+    "storage_bucket": "flutter-basics-feeb9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083438144676:android:cdd90a4287eae9d04b5a31",
+        "android_client_info": {
+          "package_name": "com.example.flutterbasics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083438144676-npfl44q3r8gd8pq40ahatk1g3u0oh0mo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe6JX9yFu91HX5pgG8RrG4jUVXSo2xMr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083438144676-npfl44q3r8gd8pq40ahatk1g3u0oh0mo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterbasics/service/authentication.dart';
 import 'package:flutterbasics/view/DashboardView.dart';
 import 'package:flutterbasics/view/LoginView.dart';
 
@@ -10,6 +11,11 @@ enum AuthStatus {
 }
 
 class RootView extends StatefulWidget {
+
+  RootView({this.baseAuth});
+
+  final BaseAuth baseAuth;
+
   @override
   _RootViewState createState() => _RootViewState();
 }
@@ -19,12 +25,20 @@ class _RootViewState extends State<RootView> {
   String _userId = "A";
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    authStatus = AuthStatus.LOGGED_OUT;
+    var userId = await widget.baseAuth.currentUser();
+
+    setState(() {
+      setState(() {
+        authStatus = userId != null ? AuthStatus.LOGGED_IN: AuthStatus.LOGGED_OUT;
+        _userId = userId;
+      });
+    });
   }
 
-  void logoutCallback() {
+  void logoutCallback() async{
+    var res = await widget.baseAuth.signOut();
     setState(() {
       authStatus = AuthStatus.LOGGED_OUT;
       _userId = "";
@@ -40,10 +54,16 @@ class _RootViewState extends State<RootView> {
     );
   }
 
-  void loginCallback() {
+  void loginCallback() async{
+    var userId = await widget.baseAuth.currentUser();
+
     setState(() {
-      _userId = 'Nikita';
       authStatus = AuthStatus.LOGGED_IN;
+
+      setState(() {
+        authStatus = AuthStatus.LOGGED_IN;
+        _userId = userId;
+      });
     });
   }
 
@@ -51,7 +71,7 @@ class _RootViewState extends State<RootView> {
   Widget build(BuildContext context) {
     switch(authStatus) {
       case AuthStatus.LOGGED_OUT:
-        return new LoginView(loginCallback: loginCallback);
+        return new LoginView(loginCallback: loginCallback, auth: widget.baseAuth);
         break;
       case AuthStatus.NOT_DETERMINED:
         return buildWaitingScreen();
