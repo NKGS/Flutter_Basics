@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutterbasics/service/authentication.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -61,6 +62,56 @@ class _LoginViewState extends State<LoginView> {
     return false;
   }
 
+  googleSignIn() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount googleUser =
+      await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+
+      // get the credentials to (access / id token)
+      // to sign in via Firebase Authentication
+      final AuthCredential credential =
+      GoogleAuthProvider.getCredential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken
+      );
+
+      String userId = (await widget.auth.signInWithCredential(credential));
+      print('google singin userID $userId');
+      widget.loginCallback();
+    } catch(e) {
+      print('Error - $e');
+      print('Error message - ${e.message}');
+      showAlert(e.message);
+    }
+  }
+
+   initiateFacebookLogin() async {
+//    var facebookLogin = FacebookLogin();
+//    var facebookLoginResult = await facebookLogin.logIn(['email']);
+//    print('facebookLoginResult - $facebookLoginResult');
+//    switch (facebookLoginResult.status) {
+//      case FacebookLoginStatus.error:
+//        print("Error");
+//        //onLoginStatusChanged(false);
+//        break;
+//      case FacebookLoginStatus.cancelledByUser:
+//        print("CancelledByUser");
+//        //onLoginStatusChanged(false);
+//        break;
+//      case FacebookLoginStatus.loggedIn:
+//        print("LoggedIn");
+//        widget.loginCallback();
+//        break;
+//    }
+  }
+
+  initateTwitterLogin() {
+
+  }
+
   validateAndSubmit () async{
     if(validateFormNSave()) {
       setState(() {
@@ -68,7 +119,6 @@ class _LoginViewState extends State<LoginView> {
       });
       try {
         final FirebaseAuth _auth = FirebaseAuth.instance;
-        final GoogleSignIn googleSignIn = GoogleSignIn();
         if (_formType == FormType.login) {
           String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
           print('Signed up user: $userId');
@@ -125,12 +175,34 @@ class _LoginViewState extends State<LoginView> {
             showPasswordInput(),
             SizedBox(height: 20),
             showConfirmPassword(),
-            showPrimaryButton()
+            showPrimaryButton(),
+            showOtherButtons()
           ],
         ),
         ),
       )
     );
+  }
+
+  Widget showOtherButtons() {
+    return Column(
+        children: <Widget>[
+          FlatButton(
+            child: Text('Sign In With Google',
+              style: TextStyle(fontSize: 20.0, color: Colors.teal),),
+            onPressed: googleSignIn,
+          ),
+          FlatButton(
+            child: Text('Sign In With Facebook',
+              style: TextStyle(fontSize: 20.0, color: Colors.teal),),
+            onPressed: initiateFacebookLogin,
+          ),
+          FlatButton(
+            child: Text('Sign In With Twitter',
+              style: TextStyle(fontSize: 20.0, color: Colors.teal),),
+            onPressed: initateTwitterLogin,
+          )
+        ]);
   }
 
   Widget showEmailInput() {

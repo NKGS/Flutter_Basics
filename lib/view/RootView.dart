@@ -24,17 +24,28 @@ class _RootViewState extends State<RootView> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "A";
 
+  getUserData() async{
+    String val =  await widget.baseAuth.currentUser();
+    return val;
+  }
   @override
-  void initState() async {
+  void initState()  {
     super.initState();
-    var userId = await widget.baseAuth.currentUser();
+//    String userId = getUserData().then((userId) {
+//      setState(() {
+//        setState(() {
+//          authStatus = userId != null ? AuthStatus.LOGGED_IN: AuthStatus.LOGGED_OUT;
+//          _userId = userId;
+//        });
+//      });
+//    });
 
+    String userId = null;
     setState(() {
-      setState(() {
-        authStatus = userId != null ? AuthStatus.LOGGED_IN: AuthStatus.LOGGED_OUT;
-        _userId = userId;
-      });
+      authStatus = userId != null ? AuthStatus.LOGGED_IN: AuthStatus.LOGGED_OUT;
+      _userId = '';
     });
+
   }
 
   void logoutCallback() async{

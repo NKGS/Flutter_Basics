@@ -6,11 +6,18 @@ abstract class BaseAuth {
   Future<String> createUserWithEmailAndPassword(String email, String password);
   Future<String> currentUser();
   Future<void> signOut();
+  Future<String> signInWithCredential(AuthCredential credential);
 }
 
 class Authentication implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  @override
+  Future<String> signInWithCredential(AuthCredential credential) async {
+    final FirebaseUser user = (await _firebaseAuth.signInWithCredential(credential)).user;
+    print('singin with google $user');
+    return user?.uid;
+  }
   @override
   Future<String> createUserWithEmailAndPassword(String email, String password) async {
     AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
