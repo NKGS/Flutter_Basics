@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutterbasics/service/authentication.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 
 class LoginView extends StatefulWidget {
   LoginView({@required  this.loginCallback, this.auth ,Key key}): super(key:key);
@@ -41,6 +42,13 @@ enum FormType {
 }
 
 class _LoginViewState extends State<LoginView> {
+
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
+
+  static final TwitterLogin twitterLogin = new TwitterLogin(
+    consumerKey: 'kkOvaF1Mowy4JTvCxKTV5O1WF',
+    consumerSecret: 'ZECGsI6UUDBEUVGkJe4S5vd0FGqGxC3wMJCgsXgPRfjSwRFnyH',
+  );
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = new TextEditingController();
@@ -89,27 +97,43 @@ class _LoginViewState extends State<LoginView> {
   }
 
    initiateFacebookLogin() async {
-//    var facebookLogin = FacebookLogin();
-//    var facebookLoginResult = await facebookLogin.logIn(['email']);
-//    print('facebookLoginResult - $facebookLoginResult');
-//    switch (facebookLoginResult.status) {
-//      case FacebookLoginStatus.error:
-//        print("Error");
-//        //onLoginStatusChanged(false);
-//        break;
-//      case FacebookLoginStatus.cancelledByUser:
-//        print("CancelledByUser");
-//        //onLoginStatusChanged(false);
-//        break;
-//      case FacebookLoginStatus.loggedIn:
-//        print("LoggedIn");
-//        widget.loginCallback();
-//        break;
-//    }
+     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+     print('facebookLoginResult - $result');
+    switch (result.status) {
+      case FacebookLoginStatus.error:
+        print("Error");
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("CancelledByUser");
+        break;
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn");
+        final FacebookAccessToken accessToken = result.accessToken;
+        print("Token: ${accessToken.token}, User id: ${accessToken.userId}, Expires: ${accessToken.expires}");
+        final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: accessToken.token);
+        String user = await widget.auth.signInWithCredential(credential);
+        print(user);
+        widget.loginCallback();
+        break;
+    }
   }
 
-  initateTwitterLogin() {
+  initateTwitterLogin() async {
+    final TwitterLoginResult result = await twitterLogin.authorize();
+    String newMessage;
 
+    switch (result.status) {
+      case TwitterLoginStatus.loggedIn:
+        newMessage = 'Logged in! username: ${result.session.username}';
+        break;
+      case TwitterLoginStatus.cancelledByUser:
+        newMessage = 'Login cancelled by user.';
+        break;
+      case TwitterLoginStatus.error:
+        newMessage = 'Login error: ${result.errorMessage}';
+        break;
+    }
+    print(newMessage);
   }
 
   validateAndSubmit () async{
@@ -221,7 +245,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           SizedBox(height: 10),
           RaisedButton(
-            onPressed: () => {},
+            onPressed: () => {initiateFacebookLogin()},
             padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
             color: const Color(0xFFFFFFFF),
             child: Row(
@@ -242,7 +266,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           SizedBox(height: 10),
           RaisedButton(
-            onPressed: () => {},
+            onPressed: () => { initateTwitterLogin() },
             padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
             color: const Color(0xFFFFFFFF),
             child: Row(
