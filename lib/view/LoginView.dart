@@ -167,20 +167,102 @@ class _LoginViewState extends State<LoginView> {
         child: Form(
           autovalidate: _autoValidate,
           key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            showEmailInput(),
-            SizedBox(height: 20),
-            showPasswordInput(),
-            SizedBox(height: 20),
-            showConfirmPassword(),
-            showPrimaryButton(),
-            showOtherButtons()
-          ],
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 30),
+                Text(_formType == FormType.register ? 'Register' : 'Sign In',
+                    style: new TextStyle(fontSize: 20.0, color: Colors.teal,decoration: TextDecoration.underline )),
+                showEmailInput(),
+                SizedBox(height: 20),
+                showPasswordInput(),
+                SizedBox(height: (_formType == FormType.register) ? 20: 5),
+                showConfirmPassword(),
+                SizedBox(height: 5),
+                showPrimaryButton(),
+                showOtherButtonsImages()
+                //showOtherButtons()
+              ],
         ),
+            ),
+          ),
         ),
       )
+    );
+  }
+
+  Widget showOtherButtonsImages() {
+    return Container(
+      alignment: Alignment.center,
+
+      child: Column(
+        children: [
+          RaisedButton(
+            onPressed: () => {},
+            padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
+            color: const Color(0xFFFFFFFF),
+            child: Row(
+                mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/google.jpg', height: 30.0,),
+                new Container(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: new Text(
+                      "Sign in with Google",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    )
+                ),
+              ]
+            ),
+          ),
+          SizedBox(height: 10),
+          RaisedButton(
+            onPressed: () => {},
+            padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
+            color: const Color(0xFFFFFFFF),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/fb.jpg', height: 30.0,),
+                new Container(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: new Text(
+                      "Sign in with Facebook",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    )
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          RaisedButton(
+            onPressed: () => {},
+            padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
+            color: const Color(0xFFFFFFFF),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/twitter.png', height: 30.0,),
+                new Container(
+                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: new Text(
+                      "Sign in with Twitter",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    )
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -249,43 +331,53 @@ class _LoginViewState extends State<LoginView> {
 
   Widget showPrimaryButton() {
     if(_formType == FormType.login) {
-      return Column(
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             RaisedButton(
-              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(color: Colors.teal)
+              ),
+              child: Text('Register',
+                style: TextStyle(fontSize: 15.0, color: Colors.teal),),
+              onPressed: moveToRegister,
+            ),
+            RaisedButton(
+              elevation: 0.0,
               shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10.0)),
-              color: Colors.blue,
+                  borderRadius: new BorderRadius.circular(8.0)),
+              color: Colors.teal,
               child: new Text('Login',
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
               onPressed: () {
                 validateAndSubmit();
               },
-            ),
-            FlatButton(
-              child: Text('Create an account',
-                style: TextStyle(fontSize: 20.0, color: Colors.teal),),
-              onPressed: moveToRegister,
             )
           ]);
     } else {
-      return Column(
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(color: Colors.teal)
+              ),
+              child: Text('Sign In',
+                style: TextStyle(fontSize: 15.0, color: Colors.teal),),
+              onPressed: moveToLogin,
+            ),
             RaisedButton(
               elevation: 5.0,
               shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(10.0)),
-              color: Colors.blue,
+              color: Colors.teal,
               child: new Text('Register',
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
               onPressed: () {
                 validateAndSubmit();
               },
-            ),
-            FlatButton(
-              child: Text('Sign In',
-                style: TextStyle(fontSize: 20.0, color: Colors.teal),),
-              onPressed: moveToLogin,
             )
           ]);
     }
@@ -324,7 +416,6 @@ class _LoginViewState extends State<LoginView> {
               )
             ),
           ),
-           SizedBox(height: 20)
       ]);
     } else {
       return SizedBox(height: 1);
