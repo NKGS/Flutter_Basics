@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterbasics/view/SearchProducts.dart';
 
 class MyDrawer extends StatelessWidget {
 
@@ -8,11 +9,6 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    // Widget logout = IconButton(
-    //     icon: Icon(Icons.exit_to_app),
-    //     onPressed: () => {});
-
     Widget logout = Column(
         children: [
           Divider(height: 3,color: Colors.blueGrey),
@@ -36,42 +32,55 @@ class MyDrawer extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ListView(
-            controller: controller,
-            physics: physics,
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                child: Text('Flutter Basics', style: new TextStyle(
-                  color: Colors.white
-                )),
-                    decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-              
-              ),
-              ListTile(
-                title: Text('View Categories'),
-                onTap: () {},
-              ),
-              Divider(height: 1.0, color: Colors.blueGrey,),
-              ListTile(
-                title: Text('Search Products'),
-                onTap: () {},
-              ),
-              Divider(height: 1.0, color: Colors.blueGrey,),
-              ListTile(
-                title: Text('View Cart'),
-                onTap: () {},
-              ),
-              Divider(height: 1.0, color: Colors.blueGrey,),
-              ListTile(
-                title: Text('Add Address'),
-                onTap: () {},
-              ),
-              Divider(height: 1.0, color: Colors.blueGrey,)
-            ],
+          Flexible(
+            child: ListView(
+              controller: controller,
+              physics: physics,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  child: Text('Flutter Basics', style: new TextStyle(
+                    color: Colors.white
+                  )),
+                      decoration: BoxDecoration(
+                      color: Colors.blue,
+                    ),
+                
+                ),
+                ListTile(
+                  title: Text('View Categories'),
+                  onTap: () {},
+                ),
+                Divider(height: 1.0, color: Colors.blueGrey,),
+                ListTile(
+                  title: Text('Search Products'),
+                  onTap: () {
+
+                    var route = ModalRoute.of(context);
+
+                    if(route!=null){
+                        print(route.settings.name);
+                    }
+                    //to dismiss drawer
+                    Navigator.pop(context);
+                    //Navigator.pushNamed(context, "/SearchProducts");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchProducts() ));
+                  },
+                ),
+                Divider(height: 1.0, color: Colors.blueGrey,),
+                ListTile(
+                  title: Text('View Cart'),
+                  onTap: () {},
+                ),
+                Divider(height: 1.0, color: Colors.blueGrey,),
+                ListTile(
+                  title: Text('Add Address'),
+                  onTap: () {},
+                ),
+                Divider(height: 1.0, color: Colors.blueGrey,)
+              ],
+            ),
           ),
           this.isListLarge() ? Container() : logout 
         ],
@@ -80,7 +89,7 @@ class MyDrawer extends StatelessWidget {
     );
   }
 
-   bool isListLarge() {
+  bool isListLarge() {
     return controller.positions.isNotEmpty && physics.shouldAcceptUserOffset(controller.position);
   }
 }

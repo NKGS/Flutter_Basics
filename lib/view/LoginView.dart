@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutterbasics/service/authentication.dart';
+import 'package:flutterbasics/utils/NetworkCheck.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 
@@ -43,6 +44,7 @@ enum FormType {
 
 class _LoginViewState extends State<LoginView> {
 
+  NetworkCheck networkCheck = new NetworkCheck();
   static final FacebookLogin facebookSignIn = new FacebookLogin();
 
   // static final TwitterLogin twitterLogin = new TwitterLogin(
@@ -70,52 +72,59 @@ class _LoginViewState extends State<LoginView> {
     return false;
   }
 
-  googleSignIn() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount googleUser =
-      await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+  googleSignIn(bool isNetworkPresent) async {
+    if(isNetworkPresent) {
+      try {
+        final GoogleSignIn googleSignIn = GoogleSignIn();
+        final GoogleSignInAccount googleUser =
+        await googleSignIn.signIn();
+        final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
-      // get the credentials to (access / id token)
-      // to sign in via Firebase Authentication
-      final AuthCredential credential =
-      GoogleAuthProvider.getCredential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken
-      );
+        // get the credentials to (access / id token)
+        // to sign in via Firebase Authentication
+        final AuthCredential credential =
+        GoogleAuthProvider.getCredential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken
+        );
 
-      String userId = (await widget.auth.signInWithCredential(credential));
-      print('google singin userID $userId');
-      widget.loginCallback();
-    } catch(e) {
-      print('Error - $e');
-      print('Error message - ${e.message}');
-      showAlert(e.message);
+        String userId = (await widget.auth.signInWithCredential(credential));
+        print('google singin userID $userId');
+        widget.loginCallback();
+      } catch(e) {
+        print('Error - $e');
+        print('Error message - ${e.message}');
+        showAlert(e.message);
+      }
+    }else {
+      showAlert('No network');
     }
   }
 
-   initiateFacebookLogin() async {
-     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
-     print('facebookLoginResult - $result');
-    switch (result.status) {
-      case FacebookLoginStatus.error:
-        print("Error");
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        print("CancelledByUser");
-        break;
-      case FacebookLoginStatus.loggedIn:
-        print("LoggedIn");
-        final FacebookAccessToken accessToken = result.accessToken;
-        print("Token: ${accessToken.token}, User id: ${accessToken.userId}, Expires: ${accessToken.expires}");
-        final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: accessToken.token);
-        String user = await widget.auth.signInWithCredential(credential);
-        print(user);
-        widget.loginCallback();
-        break;
-    }
+   initiateFacebookLogin(bool isNetworkPresent) async {
+     if(isNetworkPresent) {
+      final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+      switch (result.status) {
+        case FacebookLoginStatus.error:
+          print("Error");
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          print("CancelledByUser");
+          break;
+        case FacebookLoginStatus.loggedIn:
+          print("LoggedIn");
+          final FacebookAccessToken accessToken = result.accessToken;
+          print("Token: ${accessToken.token}, User id: ${accessToken.userId}, Expires: ${accessToken.expires}");
+          final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: accessToken.token);
+          String user = await widget.auth.signInWithCredential(credential);
+          print(user);
+          widget.loginCallback();
+          break;
+      }
+     } else {
+       showAlert('No network');
+     }
   }
 
   initateTwitterLogin() async {
@@ -136,26 +145,30 @@ class _LoginViewState extends State<LoginView> {
     // print(newMessage);
   }
 
-  validateAndSubmit () async{
+  validateAndSubmit (bool isNetworkPresent) async{
     if(validateFormNSave()) {
-      setState(() {
-        _autoValidate = true;
-      });
-      try {
-        final FirebaseAuth _auth = FirebaseAuth.instance;
-        if (_formType == FormType.login) {
-          String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
-          print('Signed up user: $userId');
-          widget.loginCallback();
-        } else{
-          String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
-          print('Signed up user: $userId');
-          showAlert('User added successfully!!');
+      if(isNetworkPresent) {
+        setState(() {
+          _autoValidate = true;
+        });
+        try {
+          final FirebaseAuth _auth = FirebaseAuth.instance;
+          if (_formType == FormType.login) {
+            String userId = await widget.auth.signInWithEmailAndPassword(_email, _password);
+            print('Signed up user: $userId');
+            widget.loginCallback();
+          } else{
+            String userId = await widget.auth.createUserWithEmailAndPassword(_email, _password);
+            print('Signed up user: $userId');
+            showAlert('User added successfully!!');
+          }
+        }catch(e) {
+          print('Error - $e');
+          print('Error message - ${e.message}');
+          showAlert(e.message);
         }
-      }catch(e) {
-        print('Error - $e');
-        print('Error message - ${e.message}');
-        showAlert(e.message);
+      } else {
+        showAlert('No network');
       }
     } else {
       setState(() {
@@ -224,7 +237,7 @@ class _LoginViewState extends State<LoginView> {
       child: Column(
         children: [
           RaisedButton(
-            onPressed: () => {googleSignIn()},
+            onPressed: () => {networkCheck.checkInternet(googleSignIn)},
             padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
             color: const Color(0xFFFFFFFF),
             child: Row(
@@ -245,7 +258,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           SizedBox(height: 10),
           RaisedButton(
-            onPressed: () => {initiateFacebookLogin()},
+            onPressed: () => {networkCheck.checkInternet(initiateFacebookLogin)},
             padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
             color: const Color(0xFFFFFFFF),
             child: Row(
@@ -296,12 +309,12 @@ class _LoginViewState extends State<LoginView> {
           FlatButton(
             child: Text('Sign In With Google',
               style: TextStyle(fontSize: 20.0, color: Colors.teal),),
-            onPressed: googleSignIn,
+            onPressed: networkCheck.checkInternet(googleSignIn),
           ),
           FlatButton(
             child: Text('Sign In With Facebook',
               style: TextStyle(fontSize: 20.0, color: Colors.teal),),
-            onPressed: initiateFacebookLogin,
+            onPressed: networkCheck.checkInternet(initiateFacebookLogin),
           ),
           FlatButton(
             child: Text('Sign In With Twitter',
@@ -375,7 +388,7 @@ class _LoginViewState extends State<LoginView> {
               child: new Text('Login',
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
               onPressed: () {
-                validateAndSubmit();
+                networkCheck.checkInternet(validateAndSubmit);
               },
             )
           ]);
@@ -400,7 +413,7 @@ class _LoginViewState extends State<LoginView> {
               child: new Text('Register',
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
               onPressed: () {
-                validateAndSubmit();
+                networkCheck.checkInternet(validateAndSubmit);
               },
             )
           ]);
