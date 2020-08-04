@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutterbasics/service/authentication.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
+//import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 
 class LoginView extends StatefulWidget {
   LoginView({@required  this.loginCallback, this.auth ,Key key}): super(key:key);
@@ -45,10 +45,10 @@ class _LoginViewState extends State<LoginView> {
 
   static final FacebookLogin facebookSignIn = new FacebookLogin();
 
-  static final TwitterLogin twitterLogin = new TwitterLogin(
-    consumerKey: 'kkOvaF1Mowy4JTvCxKTV5O1WF',
-    consumerSecret: 'ZECGsI6UUDBEUVGkJe4S5vd0FGqGxC3wMJCgsXgPRfjSwRFnyH',
-  );
+  // static final TwitterLogin twitterLogin = new TwitterLogin(
+  //   consumerKey: 'kkOvaF1Mowy4JTvCxKTV5O1WF',
+  //   consumerSecret: 'ZECGsI6UUDBEUVGkJe4S5vd0FGqGxC3wMJCgsXgPRfjSwRFnyH',
+  // );
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = new TextEditingController();
@@ -119,21 +119,21 @@ class _LoginViewState extends State<LoginView> {
   }
 
   initateTwitterLogin() async {
-    final TwitterLoginResult result = await twitterLogin.authorize();
-    String newMessage;
+    // final TwitterLoginResult result = await twitterLogin.authorize();
+    // String newMessage;
 
-    switch (result.status) {
-      case TwitterLoginStatus.loggedIn:
-        newMessage = 'Logged in! username: ${result.session.username}';
-        break;
-      case TwitterLoginStatus.cancelledByUser:
-        newMessage = 'Login cancelled by user.';
-        break;
-      case TwitterLoginStatus.error:
-        newMessage = 'Login error: ${result.errorMessage}';
-        break;
-    }
-    print(newMessage);
+    // switch (result.status) {
+    //   case TwitterLoginStatus.loggedIn:
+    //     newMessage = 'Logged in! username: ${result.session.username}';
+    //     break;
+    //   case TwitterLoginStatus.cancelledByUser:
+    //     newMessage = 'Login cancelled by user.';
+    //     break;
+    //   case TwitterLoginStatus.error:
+    //     newMessage = 'Login error: ${result.errorMessage}';
+    //     break;
+    // }
+    // print(newMessage);
   }
 
   validateAndSubmit () async{
@@ -224,7 +224,7 @@ class _LoginViewState extends State<LoginView> {
       child: Column(
         children: [
           RaisedButton(
-            onPressed: () => {},
+            onPressed: () => {googleSignIn()},
             padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
             color: const Color(0xFFFFFFFF),
             child: Row(
@@ -263,28 +263,28 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ],
             ),
-          ),
-          SizedBox(height: 10),
-          RaisedButton(
-            onPressed: () => { initateTwitterLogin() },
-            padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
-            color: const Color(0xFFFFFFFF),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset('assets/images/twitter.png', height: 30.0,),
-                new Container(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                    child: new Text(
-                      "Sign in with Twitter",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    )
-                ),
-              ],
-            ),
           )
+          // SizedBox(height: 10),
+          // RaisedButton(
+          //   onPressed: () => { initateTwitterLogin() },
+          //   padding: EdgeInsets.only(top: 3.0, bottom: 3.0, left: 3.0),
+          //   color: const Color(0xFFFFFFFF),
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       Image.asset('assets/images/twitter.png', height: 30.0,),
+          //       new Container(
+          //           padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          //           child: new Text(
+          //             "Sign in with Twitter",
+          //             style: TextStyle(
+          //                 color: Colors.grey,
+          //                 fontWeight: FontWeight.bold),
+          //           )
+          //       ),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
