@@ -1,5 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbasics/view/SearchProducts.dart';
+
+extension NavigatorStateExtension on NavigatorState {
+
+  void pushNamedIfNotCurrent( String routeName, {Object arguments} ) {
+    if (!isCurrent(routeName)) {
+      pushNamed( routeName, arguments: arguments );
+    }
+  }
+
+  bool isCurrent( String routeName ) {
+    bool isCurrent = false;
+    popUntil( (route) {
+      if (route.settings.name == routeName) {
+        isCurrent = true;
+      }
+      return true;
+    } );
+    return isCurrent;
+  }
+
+}
 
 class MyDrawer extends StatelessWidget {
 
@@ -27,6 +47,14 @@ class MyDrawer extends StatelessWidget {
               )
         ]
     );
+
+    dismissDrawerAndPush(routeName) {
+      //to dismiss drawer
+      Navigator.pop(context);
+
+      //check if the route exists in stack if so then do not push
+      Navigator.of(context).pushNamedIfNotCurrent(routeName);
+    }
 
     return Drawer(
       child: Column(
@@ -56,16 +84,7 @@ class MyDrawer extends StatelessWidget {
                 ListTile(
                   title: Text('Search Products'),
                   onTap: () {
-
-                    var route = ModalRoute.of(context);
-
-                    if(route!=null){
-                        print(route.settings.name);
-                    }
-                    //to dismiss drawer
-                    Navigator.pop(context);
-                    //Navigator.pushNamed(context, "/SearchProducts");
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchProducts() ));
+                    dismissDrawerAndPush("/SearchProducts");
                   },
                 ),
                 Divider(height: 1.0, color: Colors.blueGrey,),

@@ -372,21 +372,15 @@ class _LoginViewState extends State<LoginView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Colors.teal)
-              ),
-              child: Text('Register',
-                style: TextStyle(fontSize: 15.0, color: Colors.teal),),
+              shape: new OutlineInputBorder(borderRadius: new BorderRadius.circular(8.0), borderSide: BorderSide(color: Colors.teal)),
+              color: Colors.white,
+              child: Text('Register', style: Theme.of(context).textTheme.button),
               onPressed: moveToRegister,
             ),
             RaisedButton(
               elevation: 0.0,
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(8.0)),
-              color: Colors.teal,
-              child: new Text('Login',
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+              shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
+              child: new Text('Login'),
               onPressed: () {
                 networkCheck.checkInternet(validateAndSubmit);
               },
@@ -397,21 +391,15 @@ class _LoginViewState extends State<LoginView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Colors.teal)
-              ),
-              child: Text('Sign In',
-                style: TextStyle(fontSize: 15.0, color: Colors.teal),),
+              shape: new OutlineInputBorder(borderRadius: new BorderRadius.circular(8.0), borderSide: BorderSide(color: Colors.teal)),
+              color: Colors.white,
+              child: Text('Sign In', style: Theme.of(context).textTheme.button),
               onPressed: moveToLogin,
             ),
             RaisedButton(
               elevation: 5.0,
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10.0)),
-              color: Colors.teal,
-              child: new Text('Register',
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+              shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
+              child: new Text('Register'),
               onPressed: () {
                 networkCheck.checkInternet(validateAndSubmit);
               },
